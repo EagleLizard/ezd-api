@@ -1,9 +1,7 @@
+import { Context } from 'hono';
 
-import Koa from 'koa';
-
-export function getHealthCtrl(ctx: Koa.Context, next: Koa.Next) {
-  ctx.body = {
+export function getHealthCtrl(c: Context) {
+  return c.json({
     status: 'ok',
-  };
-  ctx.status = 200;
+  });
 }

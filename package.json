@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node ./dist/main.js",
-    "dev": "nodemon --ext '*' -w dist --exec 'npm start'",
+    "start": "node ./dist/main.js h",
+    "dev": "nodemon --ext '*' -w dist --exec 'npm start h'",
     "build": "tsc",
     "test": "vitest",
     "coverage": "vitest run --coverage"
@@ -25,8 +25,11 @@
     "vitest": "^2.1.1"
   },
   "dependencies": {
+    "@hono/node-server": "^1.13.1",
     "@koa/router": "^13.1.0",
     "dotenv": "^16.4.5",
-    "koa": "^2.15.3"
+    "hono": "^4.6.3",
+    "koa": "^2.15.3",
+    "pino": "^9.4.0"
   }
 }

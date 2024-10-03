@@ -4,6 +4,7 @@ import { isString } from './util/validate-primitives';
 dotenv.config();
 
 const config = {
+  EZD_ENV: getEnvVarOrErr('EZD_ENV'),
   EZD_HOST: getEnvVarOrErr('EZD_HOST'),
   EZD_PORT: getNumberEnvVar('EZD_PORT'),
 } as const;

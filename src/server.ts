@@ -1,34 +1,24 @@
 
-import Koa from 'koa';
-import KoaRouter from '@koa/router';
+import { Hono } from 'hono';
+import { serve as honoServe } from '@hono/node-server';
 
 import { config } from './config';
-import { Timer } from './util/timer';
-import { addRoutes } from './routes';
+import { addHRoutes } from './h-routes';
+import { logMiddleware } from './middleware/log-middleware';
 
-export async function initServer(): Promise<void> {
-  let app: Koa;
-  let router: KoaRouter;
+export async function initServer() {
+  let app: Hono;
+  app = new Hono();
 
-  app = new Koa();
-  router = new KoaRouter();
+  app.use(logMiddleware());
 
-  app.use(async (ctx, next) => {
-    let reqTimer: Timer;
-    let reqMs: number;
-    reqTimer = Timer.start();
-    await next();
-    reqMs = reqTimer.stop();
-    console.log(`${ctx.method} ${ctx.url} - ${reqMs}`);
-  });
+  addHRoutes(app);
 
-  router = addRoutes(router);
-
-  app.use(router.routes());
-
-  console.log(`Listening on ${config.EZD_HOST}:${config.EZD_PORT}`);
-  app.listen({
-    host: config.EZD_HOST,
+  honoServe({
     port: config.EZD_PORT,
+    hostname: config.EZD_HOST,
+    fetch: app.fetch,
+  }, (info) => {
+    console.log(`Listening on ${info.address}:${info.port}`);
   });
 }
