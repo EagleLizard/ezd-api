@@ -1,10 +1,11 @@
 import path from 'path';
 
-import pino, { Logger, LoggerOptions } from 'pino';
+import pino, { LoggerOptions } from 'pino';
 
 import { config } from '../config';
 import { LOG_DIR_PATH } from '../constants';
 import { mkdirIfNotExist } from '../util/files';
+import { FastifyBaseLogger } from 'fastify';
 
 const APP_LOG_FILE_NAME = 'app.log';
 const APP_LOG_FILE_PATH = [
@@ -59,6 +60,6 @@ function initLogger() {
   opts = {
     level,
   };
-  let logger2: Logger = pino(opts, stream);
+  let logger2: FastifyBaseLogger = pino(opts, stream);
   return logger2;
 }

@@ -1,24 +1,28 @@
 
-import { Hono } from 'hono';
-import { serve as honoServe } from '@hono/node-server';
+import Fastify, { FastifyInstance } from 'fastify';
 
+import { addRoutes } from './routes';
 import { config } from './config';
-import { addHRoutes } from './h-routes';
-import { logMiddleware } from './middleware/log-middleware';
+import { logger } from './lib/logger';
 
 export async function initServer() {
-  let app: Hono;
-  app = new Hono();
+  let app: FastifyInstance;
+  let port: number;
+  let host: string;
 
-  app.use(logMiddleware());
-
-  addHRoutes(app);
-
-  honoServe({
-    port: config.EZD_PORT,
-    hostname: config.EZD_HOST,
-    fetch: app.fetch,
-  }, (info) => {
-    console.log(`Listening on ${info.address}:${info.port}`);
+  app = Fastify({
+    loggerInstance: logger,
   });
+
+  addRoutes(app);
+
+  host = config.EZD_HOST;
+  port = config.EZD_PORT;
+  try {
+    await app.listen({ port, host });
+    console.log(`Listening on ${host}:${port}`);
+  } catch(e) {
+    app.log.error(e);
+    process.exit(1);
+  }
 }
