@@ -7,6 +7,9 @@ const config = {
   EZD_ENV: getEnvVarOrErr('EZD_ENV'),
   EZD_HOST: getEnvVarOrErr('EZD_HOST'),
   EZD_PORT: getNumberEnvVar('EZD_PORT'),
+
+  SFS_HOST: process.env['SFS_HOST'],
+  SFS_PORT: process.env['SFS_PORT'],
 } as const;
 
 export {

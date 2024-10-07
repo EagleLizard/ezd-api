@@ -1,24 +1,35 @@
+
 import type { FastifyReply, FastifyRequest } from 'fastify';
+import { isString } from '../../util/validate-primitives';
+import { ImageService, ImageStreamRes } from '../../service/image-service';
 
 export async function getImageCtrl(
   req: FastifyRequest<{
     Params: {
-      imagePath?: string,
-    }
+      '*'?: string,
+    };
+    Querystring: {
+      sz?: string;
+    };
   }>,
   res: FastifyReply
 ) {
-  let imgResp: Response;
-  let imgPath: string;
-  let contentType: string | null;
-  let imageParam = req.params.imagePath;
-  console.log({
-    imageParam
-  });
-  imgPath = 'bigbird.jpg';
-  imgResp = await fetch(`http://127.0.0.1:4445/img-v0/${imgPath}`);
-  res.header('Content-Type', imgResp.headers.get('content-type'));
-  return res.send(imgResp.body);
-}
+  let imagePathParam: string;
+  let szParam: string | undefined;
+  let imageStreamRes: ImageStreamRes;
 
-// function getResizeStream(stream)
+  if(
+    !isString(req.params['*'])
+    || (req.params['*'].length < 1)
+  ) {
+    return res.status(404).send();
+  }
+  imagePathParam = req.params['*'];
+  szParam = req.query.sz;
+  imageStreamRes = await ImageService.getImage({
+    imagePath: imagePathParam,
+    sz: szParam,
+  });
+  res.header('content-type', imageStreamRes.headers['content-type']);
+  return res.send(imageStreamRes.stream);
+}

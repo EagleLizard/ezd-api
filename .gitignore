@@ -13,4 +13,5 @@ data
 build
 logs
 
+_local/
 ezd_api_db_data*
