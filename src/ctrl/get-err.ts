@@ -1,14 +1,11 @@
 
-import { Context } from 'hono';
-import { logger } from '../lib/logger';
-import { isError } from '../util/validate-primitives';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
-export function getErrorCtrl(c: Context) {
-  console.log(logger.levels);
+export function getErrorCtrl(req: FastifyRequest, res: FastifyReply) {
   if(Math.random() > 0) {
     throw new Error('Oops!');
   }
-  return c.json({
+  res.send({
     status: 'ok',
   });
 }

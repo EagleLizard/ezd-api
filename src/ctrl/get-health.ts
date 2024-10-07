@@ -1,7 +1,8 @@
-import { Context } from 'hono';
 
-export function getHealthCtrl(c: Context) {
-  return c.json({
+import type { FastifyRequest, FastifyReply } from 'fastify';
+
+export function getHealthCtrl(req: FastifyRequest, res: FastifyReply) {
+  return res.send({
     status: 'ok',
   });
 }
