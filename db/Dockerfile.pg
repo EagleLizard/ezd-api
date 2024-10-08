@@ -1,0 +1,11 @@
+
+
+FROM --platform=linux/arm64 postgres:latest
+ENV TZ="America/Denver"
+
+COPY ./init.sql /docker-entrypoint-initdb.d/
+
+ENV HOME /home
+# WORKDIR $HOME
+COPY ./init.sql $HOME/.
+
