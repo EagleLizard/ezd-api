@@ -57,7 +57,7 @@ create table jcd_project_description (
   jcd_project_description_id SERIAL PRIMARY KEY,
 
   jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
-  description_id INT references description(description_id) NOT NULL,
+  description_id INT references description(description_id) ON DELETE CASCADE NOT NULL,
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
