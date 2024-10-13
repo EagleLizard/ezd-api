@@ -49,8 +49,25 @@ create table jcd_project (
   title TEXT NOT NULL,
   project_date TIMESTAMP NOT NULL,
 
-  venue_id INT references venue(venue_id) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+create table jcd_project_description (
+  jcd_project_description_id SERIAL PRIMARY KEY,
+
+  jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
   description_id INT references description(description_id) NOT NULL,
+
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+create table jcd_project_venue (
+  jcd_project_venue_id SERIAL PRIMARY KEY,
+
+  jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
+  venue_id INT references venue(venue_id) NOT NULL,
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
