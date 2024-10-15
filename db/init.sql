@@ -73,20 +73,51 @@ create table jcd_project_venue (
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-create table credit (
-  credit_id SERIAL PRIMARY KEY,
+create table jcd_credit (
+  jcd_credit_id SERIAL PRIMARY KEY,
   
+  label TEXT NOT NULL,
   jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
-  person_contrib_id INT references person(person_id),
-  org_contrib_id INT references org(org_id),
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-create table prod_credit (
-  prod_credit_id SERIAL PRIMARY KEY,
+create table jcd_credit_contrib (
+  jcd_credit_contrib_id SERIAL PRIMARY KEY,
+
+  jcd_credit_id INT references jcd_credit(jcd_credit_id) NOT NULL,
+  person_id INT references person(person_id),
+  org_id INT references org(org_id),
+
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+create table jcd_prod_credit (
+  jcd_prod_credit_id SERIAL PRIMARY KEY,
   
+  label TEXT NOT NULL,
+  jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
+
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+create table jcd_prod_credit_contrib (
+  jcd_prod_credit_contrib_id SERIAL PRIMARY KEY,
+
+  jcd_prod_credit_id INT references jcd_prod_credit(jcd_prod_credit_id) NOT NULL,
+  person_id INT references person(person_id),
+  org_id INT references org(org_id),
+  
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+create table jcd_producer (
+  jcd_producer_id SERIAL PRIMARY KEY,
+
   jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
   person_contrib_id INT references person(person_id),
   org_contrib_id INT references org(org_id),
@@ -95,19 +126,8 @@ create table prod_credit (
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-create table producer (
-  producer_id SERIAL PRIMARY KEY,
-
-  jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
-  person_contrib_id INT references person(person_id),
-  org_contrib_id INT references org(org_id),
-
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-create table press (
-  press_id SERIAL PRIMARY KEY,
+create table jcd_press (
+  jcd_press_id SERIAL PRIMARY KEY,
   description TEXT,
   link_text TEXT NOT NULL,
   link_url TEXT NOT NULL,
@@ -141,33 +161,33 @@ create table jcd_project_image (
 
 /* Sort Tables */
 
-create table credit_sort (
-  credit_sort_id SERIAL PRIMARY KEY,
+create table jcd_credit_sort (
+  jcd_credit_sort_id SERIAL PRIMARY KEY,
   sort_order INT NOT NULL,
 
-  credit_id INT references credit(credit_id) NOT NULL,
+  jcd_credit_id INT references jcd_credit(jcd_credit_id) NOT NULL,
   jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-create table prod_credit_sort (
-  prod_credit_sort_id SERIAL PRIMARY KEY,
+create table jcd_prod_credit_sort (
+  jcd_prod_credit_sort_id SERIAL PRIMARY KEY,
   sort_order INT NOT NULL,
 
-  prod_credit_id INT references prod_credit(prod_credit_id) NOT NULL,
+  jcd_prod_credit_id INT references jcd_prod_credit(jcd_prod_credit_id) NOT NULL,
   jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-create table producer_sort (
-  producer_sort_id SERIAL PRIMARY KEY,
+create table jcd_producer_sort (
+  jcd_producer_sort_id SERIAL PRIMARY KEY,
   sort_order INT NOT NULL,
 
-  producer_id INT references producer(producer_id) NOT NULL,
+  jcd_producer_id INT references jcd_producer(jcd_producer_id) NOT NULL,
   jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
