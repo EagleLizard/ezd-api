@@ -119,8 +119,8 @@ create table jcd_producer (
   jcd_producer_id SERIAL PRIMARY KEY,
 
   jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
-  person_contrib_id INT references person(person_id),
-  org_contrib_id INT references org(org_id),
+  person_id INT references person(person_id),
+  org_id INT references org(org_id),
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
