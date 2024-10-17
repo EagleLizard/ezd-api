@@ -163,7 +163,7 @@ create table jcd_project_image (
 
 create table jcd_project_sort (
   jcd_project_sort_id SERIAL PRIMARY KEY,
-  sort_order INT NOT NULL,
+  sort_order INT NOT NULL UNIQUE,
   
   jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
 
@@ -173,7 +173,7 @@ create table jcd_project_sort (
 
 create table jcd_credit_sort (
   jcd_credit_sort_id SERIAL PRIMARY KEY,
-  sort_order INT NOT NULL,
+  sort_order INT NOT NULL UNIQUE,
 
   jcd_credit_id INT references jcd_credit(jcd_credit_id) NOT NULL,
   jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
@@ -184,7 +184,7 @@ create table jcd_credit_sort (
 
 create table jcd_prod_credit_sort (
   jcd_prod_credit_sort_id SERIAL PRIMARY KEY,
-  sort_order INT NOT NULL,
+  sort_order INT NOT NULL UNIQUE,
 
   jcd_prod_credit_id INT references jcd_prod_credit(jcd_prod_credit_id) NOT NULL,
   jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
@@ -195,7 +195,7 @@ create table jcd_prod_credit_sort (
 
 create table jcd_producer_sort (
   jcd_producer_sort_id SERIAL PRIMARY KEY,
-  sort_order INT NOT NULL,
+  sort_order INT NOT NULL UNIQUE,
 
   jcd_producer_id INT references jcd_producer(jcd_producer_id) NOT NULL,
   jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
@@ -206,7 +206,7 @@ create table jcd_producer_sort (
 
 create table jcd_project_image_sort (
   jcd_project_image_sort_id SERIAL PRIMARY KEY,
-  sort_order INT NOT NULL,
+  sort_order INT NOT NULL UNIQUE,
 
   jcd_project_image_id INT references jcd_project_image(jcd_project_image_id) NOT NULL,
   jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
