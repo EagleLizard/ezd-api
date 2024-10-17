@@ -161,6 +161,16 @@ create table jcd_project_image (
 
 /* Sort Tables */
 
+create table jcd_project_sort (
+  jcd_project_sort_id SERIAL PRIMARY KEY,
+  sort_order INT NOT NULL,
+  
+  jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
+
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 create table jcd_credit_sort (
   jcd_credit_sort_id SERIAL PRIMARY KEY,
   sort_order INT NOT NULL,
@@ -188,16 +198,6 @@ create table jcd_producer_sort (
   sort_order INT NOT NULL,
 
   jcd_producer_id INT references jcd_producer(jcd_producer_id) NOT NULL,
-  jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
-
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-create table jcd_project_sort (
-  jcd_project_sort_id SERIAL PRIMARY KEY,
-  sort_order INT NOT NULL,
-  
   jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
