@@ -163,9 +163,9 @@ create table jcd_project_image (
 
 create table jcd_project_sort (
   jcd_project_sort_id SERIAL PRIMARY KEY,
-  sort_order INT NOT NULL UNIQUE,
+  sort_order INT NOT NULL UNIQUE deferrable initially immediate,
   
-  jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
+  jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL UNIQUE,
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
