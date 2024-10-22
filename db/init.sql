@@ -3,7 +3,7 @@ create type JCD_PROJECT_IMAGE_KIND AS ENUM('gallery', 'title');
 
 create table person (
   person_id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL,
+  name TEXT NOT NULL UNIQUE,
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -19,7 +19,7 @@ create table org (
 
 create table description (
   description_id SERIAL PRIMARY KEY,
-  text TEXT NOT NULL,
+  text TEXT NOT NULL UNIQUE,
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -27,7 +27,7 @@ create table description (
 
 create table publication (
   publication_id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL,
+  name TEXT NOT NULL UNIQUE,
   
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -35,7 +35,7 @@ create table publication (
 
 create table venue (
   venue_id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL,
+  name TEXT NOT NULL UNIQUE,
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
