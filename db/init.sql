@@ -122,9 +122,11 @@ create table jcd_prod_credit_contrib (
 create table jcd_producer (
   jcd_producer_id SERIAL PRIMARY KEY,
 
+  sort_order INT NOT NULL,
   jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
   person_id INT references person(person_id),
   org_id INT references org(org_id),
+  UNIQUE(sort_order, jcd_project_id),
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -194,17 +196,6 @@ create table jcd_prod_credit_sort (
   jcd_prod_credit_id INT references jcd_prod_credit(jcd_prod_credit_id) NOT NULL UNIQUE,
   jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
   UNIQUE(jcd_prod_credit_id, jcd_project_id, sort_order),
-
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-create table jcd_producer_sort (
-  jcd_producer_sort_id SERIAL PRIMARY KEY,
-  sort_order INT NOT NULL UNIQUE,
-
-  jcd_producer_id INT references jcd_producer(jcd_producer_id) NOT NULL,
-  jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
