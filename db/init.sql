@@ -173,10 +173,11 @@ create table jcd_project_sort (
 
 create table jcd_credit_sort (
   jcd_credit_sort_id SERIAL PRIMARY KEY,
-  sort_order INT NOT NULL UNIQUE,
+  sort_order INT NOT NULL,
 
-  jcd_credit_id INT references jcd_credit(jcd_credit_id) NOT NULL,
+  jcd_credit_id INT references jcd_credit(jcd_credit_id) NOT NULL UNIQUE,
   jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
+  UNIQUE(jcd_credit_id, jcd_project_id, sort_order),
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
