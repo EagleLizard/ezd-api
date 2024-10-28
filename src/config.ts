@@ -14,6 +14,8 @@ const config = {
   POSTGRES_PASSWORD: getEnvVarOrErr('POSTGRES_PASSWORD'),
   POSTGRES_DB: getEnvVarOrErr('POSTGRES_DB'),
 
+  EZD_WEB_ORIGIN: getEnvVarOrErr('EZD_WEB_ORIGIN'),
+
   SFS_HOST: process.env['SFS_HOST'],
   SFS_PORT: process.env['SFS_PORT'],
 } as const;

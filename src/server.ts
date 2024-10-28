@@ -1,5 +1,6 @@
 
 import Fastify, { FastifyInstance } from 'fastify';
+import cors from '@fastify/cors';
 
 import { addRoutes } from './routes';
 import { config } from './config';
@@ -12,6 +13,14 @@ export async function initServer() {
 
   app = Fastify({
     loggerInstance: logger,
+  });
+
+  /*
+    Middleware
+  _*/
+  app.register(cors, {
+    origin: '*',
+    credentials: true,
   });
 
   addRoutes(app);

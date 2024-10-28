@@ -4,6 +4,7 @@ import type { FastifyInstance } from 'fastify';
 import { getHealthCtrl } from './ctrl/get-health';
 import { getImageCtrl } from './ctrl/image/get-image';
 import { getErrorCtrl } from './ctrl/get-err';
+import { getJcdProjectsCtrl } from './ctrl/project/get-jcd-projects';
 import { getJcdProjectCtrl } from './ctrl/project/get-jcd-project';
 
 export function addRoutes(app: FastifyInstance) {
@@ -12,7 +13,8 @@ export function addRoutes(app: FastifyInstance) {
 
   app.get('/img/v1/*', getImageCtrl);
 
-  app.get('/jcd/v0/project', getJcdProjectCtrl);
+  app.get('/jcd/v1/project', getJcdProjectsCtrl);
+  app.get('/jcd/v1/project/:projectRoute', getJcdProjectCtrl);
 
   // app.get('/jcd/v1/')
 

@@ -1,11 +1,17 @@
-
-import type { FastifyReply, FastifyRequest } from 'fastify';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { JcdProjectService } from '../../service/jcd-project-service';
 
 export async function getJcdProjectCtrl(
-  req: FastifyRequest,
+  req: FastifyRequest<{
+    Params: {
+      projectRoute?: string;
+    };
+  }>,
   res: FastifyReply,
 ) {
-  let jcdProjects = await JcdProjectService.getProjects();
-  return res.status(200).send(jcdProjects);
+  if(req.params.projectRoute === undefined) {
+    return res.send(404);
+  }
+  let jcdProjectDto = await JcdProjectService.getProject(req.params.projectRoute);
+  res.send(jcdProjectDto);
 }
