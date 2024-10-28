@@ -11,7 +11,7 @@ create table person (
 
 create table org (
   org_id SERIAL PRIMARY KEY,
-  name TEXT,
+  name TEXT NOT NULL UNIQUE,
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
