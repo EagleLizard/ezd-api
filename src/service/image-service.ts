@@ -1,7 +1,7 @@
 
 import path from 'path/posix';
 import { Readable } from 'stream';
-import webStream from 'node:stream/web';
+import http from 'http';
 
 import { config } from '../config';
 import { DEFAULT_IMG_SZ, ImgSz, validateImgSz } from '../lib/models/img-sz';
@@ -41,24 +41,34 @@ async function getImage(opts: GetImageOpts): Promise<ImageStreamRes> {
 
 async function getDevStream(imagePath: string): Promise<ImageStreamRes> {
   let imgUrl: string;
-  let imageReadStream: Readable;
-  let resp: Response;
   let headers: Record<string, string>;
-  let contentType: string | null;
+
+  if(config.SFS_HOST === undefined) {
+    throw new Error(`Missing required env var: ${config.SFS_HOST}`);
+  }
+  if(config.SFS_PORT === undefined) {
+    throw new Error(`Missing required env var: ${config.SFS_PORT}`);
+  }
 
   headers = {};
   imgUrl = `http://${config.SFS_HOST}:${config.SFS_PORT}/${imagePath}`;
-  resp = await fetch(imgUrl);
-  if(resp.body === null) {
-    throw new Error(`null body when fetching: ${imagePath}`);
+
+  let req = http.request(imgUrl, {
+    method: 'GET',
+  });
+  req.end();
+  let res = await new Promise<http.IncomingMessage>((resolve, reject) => {
+    req.once('error', reject);
+    req.once('response', resolve);
+  });
+  if(res.headers['content-type'] !== undefined) {
+    headers['content-type'] = res.headers['content-type'];
   }
-  imageReadStream = Readable.fromWeb(resp.body as webStream.ReadableStream<Uint8Array>);
-  contentType = resp.headers.get('content-type');
-  if(contentType !== null) {
-    headers['content-type'] = contentType;
+  if(res.headers['content-length'] !== undefined) {
+    headers['content-length'] = res.headers['content-length'];
   }
   return {
-    stream: imageReadStream,
+    stream: res,
     headers,
   };
 }

@@ -8,6 +8,12 @@ const config = {
   EZD_HOST: getEnvVarOrErr('EZD_HOST'),
   EZD_PORT: getNumberEnvVar('EZD_PORT'),
 
+  POSTGRES_HOST: getEnvVarOrErr('POSTGRES_HOST'),
+  POSTGRES_PORT: getNumberEnvVar('POSTGRES_PORT'),
+  POSTGRES_USER: getEnvVarOrErr('POSTGRES_USER'),
+  POSTGRES_PASSWORD: getEnvVarOrErr('POSTGRES_PASSWORD'),
+  POSTGRES_DB: getEnvVarOrErr('POSTGRES_DB'),
+
   SFS_HOST: process.env['SFS_HOST'],
   SFS_PORT: process.env['SFS_PORT'],
 } as const;
