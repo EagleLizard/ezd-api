@@ -86,9 +86,11 @@ create table jcd_credit (
 create table jcd_credit_contrib (
   jcd_credit_contrib_id SERIAL PRIMARY KEY,
 
+  sort_order INT NOT NULL,
   jcd_credit_id INT references jcd_credit(jcd_credit_id) NOT NULL,
   person_id INT references person(person_id),
   org_id INT references org(org_id),
+  UNIQUE(sort_order, jcd_credit_id),
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
