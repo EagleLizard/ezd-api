@@ -137,9 +137,11 @@ create table jcd_press (
   description TEXT,
   link_text TEXT NOT NULL,
   link_url TEXT NOT NULL,
+  sort_order INT NOT NULL,
 
   jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
   publication_id INT references publication(publication_id) NOT NULL,
+  UNIQUE(sort_order, jcd_project_id) deferrable initially immediate,
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
