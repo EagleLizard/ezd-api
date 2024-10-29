@@ -1,4 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { JcdProjectDb } from '../../service/db/jcd-project-db';
 import { JcdProjectService } from '../../service/jcd-project-service';
 
 export async function getJcdProjectCtrl(
@@ -12,6 +13,7 @@ export async function getJcdProjectCtrl(
   if(req.params.projectRoute === undefined) {
     return res.send(404);
   }
-  let jcdProjectDto = await JcdProjectService.getProject(req.params.projectRoute);
-  res.send(jcdProjectDto);
+  let jcdProjectDto = await JcdProjectDb.getProjectBase(req.params.projectRoute);
+  let jcdProject = await JcdProjectService.getProject(jcdProjectDto);
+  res.send(jcdProject);
 }
