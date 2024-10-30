@@ -2,10 +2,22 @@
 import { JcdProjectDb } from './db/jcd-project-db';
 import { JcdCreditsDb } from './db/jcd-credits-db';
 import { JcdProjectDtoType } from '../lib/models/dto/jcd-project-dto';
+import { JcdPressDb } from './db/jcd-press-db';
 
 type JcdCredit = {
   label: string;
   contribs: string[];
+};
+
+type JcdPressLink = {
+  label: string;
+  url: string;
+};
+
+type JcdPressItem = {
+  publication: string;
+  description?: string;
+  link: JcdPressLink;
 };
 
 type JcdProject = {
@@ -19,6 +31,7 @@ type JcdProject = {
   year: number;
   description: string[];
   productionCredits: string[];
+  mediaAndPress: JcdPressItem[];
 };
 
 export const JcdProjectService = {
@@ -36,12 +49,14 @@ async function getProject(jcdProjectDto: JcdProjectDtoType) {
     jcdProducerDtos,
     jcdCredits,
     jcdProdCredits,
+    jcdPressItems,
   ] = await Promise.all([
     JcdProjectDb.getDesc(jcdProjectDto.jcd_project_id),
     JcdProjectDb.getVenue(jcdProjectDto.jcd_project_id),
     JcdCreditsDb.getProducers(jcdProjectDto.jcd_project_id),
     getCredits(jcdProjectDto.jcd_project_id),
     getProdCredits(jcdProjectDto.jcd_project_id),
+    getPress(jcdProjectDto.jcd_project_id),
   ]);
 
   let jcdProject: JcdProject;
@@ -65,6 +80,7 @@ async function getProject(jcdProjectDto: JcdProjectDtoType) {
     year: jcdProjectDto.project_date.getFullYear(),
     description: jcdProjectDescDto.text.split('\n'),
     productionCredits,
+    mediaAndPress: jcdPressItems,
   };
   return jcdProject;
 }
@@ -105,4 +121,25 @@ async function getCredits(jcd_project_id: number) {
   }
   let jcdCredits = await Promise.all(jcdCreditPromises);
   return jcdCredits;
+}
+
+async function getPress(jcd_project_id: number): Promise<JcdPressItem[]> {
+  let pressItems: JcdPressItem[];
+  let jcdPressDtos = await JcdPressDb.getProjectPress(jcd_project_id);
+  pressItems = [];
+  for(let i = 0; i < jcdPressDtos.length; ++i) {
+    let jcdPressDto = jcdPressDtos[i];
+    let pressItem: JcdPressItem = {
+      publication: jcdPressDto.publication_name,
+      link: {
+        label: jcdPressDto.link_text,
+        url: jcdPressDto.link_url,
+      },
+    };
+    if(jcdPressDto.description !== null) {
+      pressItem.description = jcdPressDto.description;
+    }
+    pressItems.push(pressItem);
+  }
+  return pressItems;
 }
