@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import { JcdProjectDb } from '../../service/db/jcd-project-db';
 import { JcdProjectService } from '../../service/jcd-project-service';
 

@@ -4,13 +4,29 @@ import { JcdProjectDescDto, JcdProjectDescDtoType } from '../../lib/models/dto/j
 import { JcdProjectDto } from '../../lib/models/dto/jcd-project-dto';
 import { JcdProjectListItemDto } from '../../lib/models/dto/jcd-project-list';
 import { JcdProjectVenueDto } from '../../lib/models/dto/jcd-project-venue-dto';
+import { JcdProjectBaseDto } from '../../lib/models/dto/jcd-project-base-dto';
 
 export const JcdProjectDb = {
+  getProjectByKey,
   getProjects,
   getProjectBase,
   getDesc,
   getVenue,
 } as const;
+
+async function getProjectByKey(project_key: string) {
+  let queryStr = `
+    SELECT
+      jp.jcd_project_id, jp.project_key, jp.route, jp.title, jp.project_date
+    FROM jcd_project jp
+    WHERE jp.project_key LIKE $1
+    LIMIT 1
+  `;
+  let res = await PgClient.query(queryStr, [
+    project_key,
+  ]);
+  return JcdProjectBaseDto.parse(res.rows[0]);
+}
 
 async function getProjects() {
   let queryStr = `
