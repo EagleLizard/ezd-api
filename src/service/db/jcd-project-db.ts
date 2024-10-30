@@ -15,10 +15,9 @@ export const JcdProjectDb = {
 async function getProjects() {
   let queryStr = `
     SELECT 
-      jp.project_key as "projectKey", 
-      jp.route, jp.title, 
-      ji.path as "titleUri",
-      jps.sort_order as "orderIndex"
+      jp.jcd_project_id, jp.project_key, jp.route, jp.title, jp.project_date,
+      ji.path as title_uri,
+      jps.sort_order
     FROM jcd_project jp
       INNER JOIN jcd_project_sort jps
         ON jp.jcd_project_id = jps.jcd_project_id

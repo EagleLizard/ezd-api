@@ -1,14 +1,15 @@
 
 import { Type, type Static } from '@sinclair/typebox';
 import { Value } from '@sinclair/typebox/value';
+import { JcdProjectBaseDto } from './jcd-project-base-dto';
 
-const JcdProjectListItemDtoSchema = Type.Object({
-  projectKey: Type.String(),
-  route: Type.String(),
-  title: Type.String(),
-  titleUri: Type.String(),
-  orderIndex: Type.Number(),
-});
+const JcdProjectListItemDtoSchema = Type.Composite([
+  JcdProjectBaseDto.schema,
+  Type.Object({
+    title_uri: Type.String(),
+    sort_order: Type.Number(),
+  }),
+]);
 
 export type JcdProjectListItemDtoType = Static<typeof JcdProjectListItemDtoSchema>;
 

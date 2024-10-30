@@ -34,15 +34,44 @@ type JcdProject = {
   mediaAndPress: JcdPressItem[];
 };
 
+type JcdProjectListItem = {} & {
+  projectKey: string;
+  route: string;
+  title: string;
+  titleUri: string;
+  orderIndex: number;
+};
+
 export const JcdProjectService = {
   getProject,
+  getProjects,
 } as const;
+
+async function getProjects(): Promise<JcdProjectListItem[]> {
+  let jcdProjectListItems: JcdProjectListItem[];
+  let jcdProjectListItemDtos = await JcdProjectDb.getProjects();
+  jcdProjectListItems = [];
+  for(let i = 0; i < jcdProjectListItemDtos.length; ++i) {
+    let jcdProjectListItem: JcdProjectListItem;
+    let jcdProjectDto = jcdProjectListItemDtos[i];
+    jcdProjectListItem = {
+      projectKey: jcdProjectDto.project_key,
+      route: jcdProjectDto.route,
+      title: jcdProjectDto.title,
+      titleUri: jcdProjectDto.title_uri,
+      orderIndex: jcdProjectDto.sort_order,
+    };
+    jcdProjectListItems.push(jcdProjectListItem);
+  }
+  return jcdProjectListItems;
+}
 
 async function getProject(jcdProjectDto: JcdProjectDtoType) {
   // let jcdProjectDescDto = await JcdProjectDb.getDesc(jcdProjectDto.jcd_project_id);
   // let jcdProducerDtos = await JcdCreditsDb.getProducers(jcdProjectDto.jcd_project_id);
   // let jcdCredits = await getCredits(jcdProjectDto.jcd_project_id);
   // let jcdProdCredits = await getProdCredits(jcdProjectDto.jcd_project_id);
+  // let jcdPressItems = await getPress(jcdProjectDto.jcd_project_id);
   let [
     jcdProjectDescDto,
     jcdProjectVenueDto,
