@@ -167,6 +167,28 @@ create table jcd_project_image (
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+create table jcd_gallery (
+  jcd_gallery_id SERIAL PRIMARY KEY,
+  active BOOLEAN NOT NULL DEFAULT TRUE,
+  gallery_key TEXT NOT NULL UNIQUE,
+
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+create table jcd_gallery_image (
+  jcd_gallery_image_id SERIAL PRIMARY KEY,
+  active BOOLEAN NOT NULL DEFAULT TRUE,
+  sort_order  INT NOT NULL,
+
+  jcd_gallery_id INT references jcd_gallery(jcd_gallery_id) ON DELETE CASCADE NOT NULL,
+  jcd_image_id INT references jcd_image(jcd_image_id) ON DELETE CASCADE NOT NULL,
+  UNIQUE(sort_order, jcd_gallery_id) deferrable initially immediate,
+
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 /* Sort Tables */
 
 create table jcd_project_sort (
