@@ -1,5 +1,5 @@
 
-create type JCD_PROJECT_IMAGE_KIND AS ENUM('gallery', 'title');
+create type JCD_GALLERY_IMAGE_KIND AS ENUM('gallery', 'title');
 
 create table person (
   person_id SERIAL PRIMARY KEY,
@@ -158,7 +158,7 @@ create table jcd_image (
 create table jcd_project_image (
   jcd_project_image_id SERIAL PRIMARY KEY,
   active BOOLEAN NOT NULL DEFAULT TRUE,
-  kind JCD_PROJECT_IMAGE_KIND NOT NULL,
+  kind JCD_GALLERY_IMAGE_KIND NOT NULL,
 
   jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
   jcd_image_id INT references jcd_image(jcd_image_id) NOT NULL,
@@ -179,6 +179,7 @@ create table jcd_gallery (
 create table jcd_gallery_image (
   jcd_gallery_image_id SERIAL PRIMARY KEY,
   active BOOLEAN NOT NULL DEFAULT TRUE,
+  kind JCD_GALLERY_IMAGE_KIND NOT NULL,
   sort_order  INT NOT NULL,
 
   jcd_gallery_id INT references jcd_gallery(jcd_gallery_id) ON DELETE CASCADE NOT NULL,
