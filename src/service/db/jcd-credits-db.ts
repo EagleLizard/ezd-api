@@ -75,11 +75,9 @@ async function getProdCredits(jcd_project_id: number) {
     SELECT
       jpc.jcd_prod_credit_id, jpc.label
     FROM jcd_prod_credit jpc
-      INNER JOIN jcd_prod_credit_sort jpcs
-        ON jpc.jcd_prod_credit_id = jpcs.jcd_prod_credit_id
     WHERE jpc.jcd_project_id = $1
-    GROUP BY jpc.jcd_prod_credit_id, jpc.label, jpcs.sort_order
-    ORDER BY jpcs.sort_order ASC
+    GROUP BY jpc.jcd_prod_credit_id, jpc.label, jpc.sort_order
+    ORDER BY jpc.sort_order ASC
   `;
   let res = await PgClient.query(queryStr, [
     jcd_project_id,
