@@ -155,18 +155,6 @@ create table jcd_image (
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-create table jcd_project_image (
-  jcd_project_image_id SERIAL PRIMARY KEY,
-  active BOOLEAN NOT NULL DEFAULT TRUE,
-  kind JCD_GALLERY_IMAGE_KIND NOT NULL,
-
-  jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
-  jcd_image_id INT references jcd_image(jcd_image_id) NOT NULL,
-
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
 create table jcd_gallery (
   jcd_gallery_id SERIAL PRIMARY KEY,
   active BOOLEAN NOT NULL DEFAULT TRUE,
@@ -221,18 +209,6 @@ create table jcd_prod_credit_sort (
   jcd_prod_credit_id INT references jcd_prod_credit(jcd_prod_credit_id) NOT NULL UNIQUE,
   jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
   UNIQUE(jcd_prod_credit_id, jcd_project_id, sort_order),
-
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-create table jcd_project_image_sort (
-  jcd_project_image_sort_id SERIAL PRIMARY KEY,
-  sort_order INT NOT NULL,
-
-  jcd_project_image_id INT references jcd_project_image(jcd_project_image_id) NOT NULL,
-  jcd_project_id INT references jcd_project(jcd_project_id) NOT NULL,
-  UNIQUE (jcd_project_image_id, jcd_project_id, sort_order),
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
