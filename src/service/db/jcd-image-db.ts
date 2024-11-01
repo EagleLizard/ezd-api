@@ -1,29 +1,28 @@
 
 import { PgClient } from '../../lib/db/postgres-client';
-import { JcdProjectImageDto } from '../../lib/models/dto/jcd-project-image-dto';
+import { JcdGalleryImageDto } from '../../lib/models/dto/jcd-gallery-image-dto';
 
 export class JcdImageDb {
   private constructor() {}
-  static getProjectImages = getProjectImages;
+  static getGalleryImagesByKey = getGalleryImages;
 }
 
-async function getProjectImages(jcd_project_id: number) {
+async function getGalleryImages(galleryKey: string) {
   let queryStr = `
     SELECT
-      jpi.jcd_project_image_id, jpi.kind, jpi.active,
-      ji.path,
-      jpis.sort_order
-    FROM jcd_project_image jpi
-      INNER JOIN jcd_project_image_sort jpis
-        ON jpi.jcd_project_image_id = jpis.jcd_project_image_id
+      jgi.jcd_gallery_image_id, jgi.kind, jgi.sort_order, jgi.active,
+      ji.path
+    FROM jcd_gallery jg
+      INNER JOIN jcd_gallery_image jgi
+        ON jg.jcd_gallery_id = jgi.jcd_gallery_id
       INNER JOIN jcd_image ji
-        ON jpi.jcd_image_id = ji.jcd_image_id
-    WHERE jpi.jcd_project_id = $1
-    ORDER BY jpis.sort_order ASC
+        ON jgi.jcd_image_id = ji.jcd_image_id
+    WHERE jg.gallery_key = $1
+    ORDER BY jgi.sort_order ASC
   `;
   let res = await PgClient.query(queryStr, [
-    jcd_project_id,
+    galleryKey,
   ]);
-  let jcdProjectImageDtos = res.rows.map(JcdProjectImageDto.parse);
-  return jcdProjectImageDtos;
+  let JcdGalleryImageDtos = res.rows.map(JcdGalleryImageDto.parse);
+  return JcdGalleryImageDtos;
 }

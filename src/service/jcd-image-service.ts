@@ -1,7 +1,7 @@
 
 import path from 'path/posix';
 import { JcdImageDb } from './db/jcd-image-db';
-import { JcdProjectImageDtoType } from '../lib/models/dto/jcd-project-image-dto';
+import { JcdGalleryImageDtoType } from '../lib/models/dto/jcd-gallery-image-dto';
 
 type JcdProjectImageType = 'GALLERY' | 'TITLE';
 
@@ -15,36 +15,35 @@ type JcdProjectImage = {} & {
 };
 
 export const JcdImageService = {
-  getProjectImages,
+  getGalleryImagesByKey,
 } as const;
 
-async function getProjectImages(opts: {
-  jcd_project_id: number;
-  jcd_project_key: string;
+async function getGalleryImagesByKey(opts: {
+  galleryKey: string;
 }): Promise<JcdProjectImage[]> {
-  let jcdProjectImages: JcdProjectImage[];
-  let jcdProjectImageDtos = await JcdImageDb.getProjectImages(opts.jcd_project_id);
-  jcdProjectImages = [];
-  for(let i = 0; i < jcdProjectImageDtos.length; ++i) {
+  let jcdGalleryImages: JcdProjectImage[];
+  let jcdGalleryImageDtos = await JcdImageDb.getGalleryImagesByKey(opts.galleryKey);
+  jcdGalleryImages = [];
+  for(let i = 0; i < jcdGalleryImageDtos.length; ++i) {
     let imageId: string;
-    let jcdProjectImage: JcdProjectImage;
-    let jcdProjectImageDto = jcdProjectImageDtos[i];
-    let parsedImagePath = path.parse(jcdProjectImageDto.path);
+    let jcdGalleryImage: JcdProjectImage;
+    let jcdGalleryImageDto = jcdGalleryImageDtos[i];
+    let parsedImagePath = path.parse(jcdGalleryImageDto.path);
     imageId = parsedImagePath.name;
-    jcdProjectImage = {
+    jcdGalleryImage = {
       id: imageId,
-      projectKey: opts.jcd_project_key,
-      bucketFile: jcdProjectImageDto.path,
-      orderIdx: jcdProjectImageDto.sort_order,
-      active: jcdProjectImageDto.active,
-      imageType: getImageTypeFromKind(jcdProjectImageDto.kind),
+      projectKey: opts.galleryKey,
+      bucketFile: jcdGalleryImageDto.path,
+      orderIdx: jcdGalleryImageDto.sort_order,
+      active: jcdGalleryImageDto.active,
+      imageType: getImageTypeFromKind(jcdGalleryImageDto.kind),
     };
-    jcdProjectImages.push(jcdProjectImage);
+    jcdGalleryImages.push(jcdGalleryImage);
   }
-  return jcdProjectImages;
+  return jcdGalleryImages;
 }
 
-function getImageTypeFromKind(kind: JcdProjectImageDtoType['kind']): JcdProjectImageType {
+function getImageTypeFromKind(kind: JcdGalleryImageDtoType['kind']): JcdProjectImageType {
   switch(kind) {
     case 'title':
       return 'TITLE';
