@@ -37,11 +37,9 @@ async function getCredits(jcd_project_id: number) {
   let queryStr = `
     SELECT jc.jcd_credit_id, jc.label
     FROM jcd_credit jc
-      INNER JOIN jcd_credit_sort jcs
-        ON jc.jcd_credit_id = jcs.jcd_credit_id
     WHERE jc.jcd_project_id = $1
-    GROUP BY jc.jcd_credit_id, jc.label, jcs.sort_order
-    ORDER BY jcs.sort_order ASC
+    GROUP BY jc.jcd_credit_id, jc.label, jc.sort_order
+    ORDER BY jc.sort_order ASC
   `;
   let res = await PgClient.query(queryStr, [
     jcd_project_id,
