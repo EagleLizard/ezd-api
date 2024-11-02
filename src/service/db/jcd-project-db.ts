@@ -37,11 +37,13 @@ async function getProjects() {
     FROM jcd_project jp
       INNER JOIN jcd_project_sort jps
         ON jp.jcd_project_id = jps.jcd_project_id
-      INNER JOIN jcd_project_image jpi
-        ON jp.jcd_project_id = jpi.jcd_project_id
+      INNER JOIN jcd_gallery jg
+        ON jp.project_key LIKE jg.gallery_key
+      INNER JOIN jcd_gallery_image jgi
+        ON jg.jcd_gallery_id = jgi.jcd_gallery_id
       INNER JOIN jcd_image ji
-        ON jpi.jcd_image_id = ji.jcd_image_id
-    WHERE jpi.kind = 'title'
+        ON jgi.jcd_image_id = ji.jcd_image_id
+    WHERE jgi.kind = 'title'
     ORDER BY jps.sort_order ASC
   `;
   let res = await PgClient.query(queryStr);
