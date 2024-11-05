@@ -68,6 +68,7 @@ async function getProjects(): Promise<JcdProjectListItem[]> {
 
 async function getProject(jcdProjectDto: JcdProjectDtoType) {
   // let jcdProjectDescDto = await JcdProjectDb.getDesc(jcdProjectDto.jcd_project_id);
+  // let jcdProjectVenueDto = await JcdProjectDb.getVenue(jcdProjectDto.jcd_project_id);
   // let jcdProducerDtos = await JcdCreditsDb.getProducers(jcdProjectDto.jcd_project_id);
   // let jcdCredits = await getCredits(jcdProjectDto.jcd_project_id);
   // let jcdProdCredits = await getProdCredits(jcdProjectDto.jcd_project_id);

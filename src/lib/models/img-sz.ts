@@ -2,6 +2,7 @@
 import { isString } from '../../util/validate-primitives';
 
 const ImgSzs = [
+  'xs',
   'sm',
   'md',
   'lg',
@@ -15,4 +16,30 @@ export function validateImgSz(val: unknown): val is ImgSz {
     return false;
   }
   return ImgSzs.includes(val as ImgSz);
+}
+
+/*
+  Map old v3 requests to new ImgSz vals
+*/
+export function imgSzFromDimensions(opts: {
+  width?: number;
+  height?: number;
+}): ImgSz {
+  if((opts.width === undefined) && (opts.height === undefined)) {
+    return DEFAULT_IMG_SZ;
+  }
+  let dimension = Math.max(opts.width ?? 0, opts.height ?? 0);
+  if(dimension > 1920) {
+    return 'xl';
+  }
+  if(dimension > 1366) {
+    return 'lg';
+  }
+  if(dimension > 854) {
+    return 'md';
+  }
+  if(dimension > 666) {
+    return 'sm';
+  }
+  return 'xs';
 }

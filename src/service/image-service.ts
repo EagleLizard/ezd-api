@@ -4,11 +4,13 @@ import { Readable } from 'stream';
 import http from 'http';
 
 import { config } from '../config';
-import { DEFAULT_IMG_SZ, ImgSz, validateImgSz } from '../lib/models/img-sz';
+import { DEFAULT_IMG_SZ, ImgSz, imgSzFromDimensions, validateImgSz } from '../lib/models/img-sz';
 
-export type GetImageOpts = {
+export type GetImageOpts = {} & {
   imagePath: string;
   sz?: string;
+  width?: number;
+  height?: number;
 };
 
 export type ImageStreamRes = {
@@ -25,15 +27,21 @@ async function getImage(opts: GetImageOpts): Promise<ImageStreamRes> {
   let imageStreamRes: ImageStreamRes;
   let sz: ImgSz;
 
-  sz = validateImgSz(opts.sz)
-    ? opts.sz
-    : DEFAULT_IMG_SZ
-  ;
+  if(validateImgSz(opts.sz)) {
+    sz = opts.sz;
+  } else if((opts.width !== undefined) || (opts.height !== undefined)) {
+    sz = imgSzFromDimensions({
+      width: opts.width,
+      height: opts.height,
+    });
+  } else {
+    sz = DEFAULT_IMG_SZ;
+  }
   imagePath = [ sz, opts.imagePath ].join(path.sep);
   if(config.EZD_ENV === 'DEV') {
     imageStreamRes = await getDevStream(imagePath);
   } else {
-    // TODO: implement aws
+    // todo:xxx: implement aws
     throw new Error('real impl');
   }
   return imageStreamRes;
