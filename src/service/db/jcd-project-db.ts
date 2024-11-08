@@ -2,7 +2,7 @@
 import { PgClient } from '../../lib/db/postgres-client';
 import { JcdProjectDescDto, JcdProjectDescDtoType } from '../../lib/models/dto/jcd-project-desc-dto';
 import { JcdProjectDto } from '../../lib/models/dto/jcd-project-dto';
-import { JcdProjectListItemDto } from '../../lib/models/dto/jcd-project-list';
+import { JcdProjectListItemDto } from '../../lib/models/dto/jcd-project-list-item-dto';
 import { JcdProjectVenueDto } from '../../lib/models/dto/jcd-project-venue-dto';
 import { JcdProjectBaseDto } from '../../lib/models/dto/jcd-project-base-dto';
 
@@ -25,6 +25,9 @@ async function getProjectByKey(project_key: string) {
   let res = await PgClient.query(queryStr, [
     project_key,
   ]);
+  if(res.rows.length < 1) {
+    return;
+  }
   return JcdProjectBaseDto.parse(res.rows[0]);
 }
 
@@ -32,18 +35,22 @@ async function getProjects() {
   let queryStr = `
     SELECT 
       jp.jcd_project_id, jp.project_key, jp.route, jp.title, jp.project_date,
-      ji.path as title_uri,
+      jgi.path as title_uri,
       jps.sort_order
     FROM jcd_project jp
       INNER JOIN jcd_project_sort jps
         ON jp.jcd_project_id = jps.jcd_project_id
-      INNER JOIN jcd_gallery jg
-        ON jp.project_key LIKE jg.gallery_key
-      INNER JOIN jcd_gallery_image jgi
-        ON jg.jcd_gallery_id = jgi.jcd_gallery_id
-      INNER JOIN jcd_image ji
-        ON jgi.jcd_image_id = ji.jcd_image_id
-    WHERE jgi.kind = 'title'
+      LEFT JOIN (
+        SELECT
+          count(1), jg.gallery_key, ji.path
+        FROM jcd_gallery jg
+          INNER JOIN jcd_gallery_image jgi
+            ON jg.jcd_gallery_id = jgi.jcd_gallery_id
+          INNER JOIN jcd_image ji
+            ON jgi.jcd_image_id = ji.jcd_image_id
+        WHERE jgi.kind = 'title'
+        GROUP BY jg.gallery_key, ji.path
+      ) jgi on jp.project_key = jgi.gallery_key
     ORDER BY jps.sort_order ASC
   `;
   let res = await PgClient.query(queryStr);

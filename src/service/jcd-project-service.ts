@@ -58,7 +58,7 @@ async function getProjects(): Promise<JcdProjectListItem[]> {
       projectKey: jcdProjectDto.project_key,
       route: jcdProjectDto.route,
       title: jcdProjectDto.title,
-      titleUri: jcdProjectDto.title_uri,
+      titleUri: jcdProjectDto.title_uri ?? '',
       orderIndex: jcdProjectDto.sort_order,
     };
     jcdProjectListItems.push(jcdProjectListItem);
@@ -67,27 +67,27 @@ async function getProjects(): Promise<JcdProjectListItem[]> {
 }
 
 async function getProject(jcdProjectDto: JcdProjectDtoType) {
-  // let jcdProjectDescDto = await JcdProjectDb.getDesc(jcdProjectDto.jcd_project_id);
-  // let jcdProjectVenueDto = await JcdProjectDb.getVenue(jcdProjectDto.jcd_project_id);
-  // let jcdProducerDtos = await JcdCreditsDb.getProducers(jcdProjectDto.jcd_project_id);
-  // let jcdCredits = await getCredits(jcdProjectDto.jcd_project_id);
-  // let jcdProdCredits = await getProdCredits(jcdProjectDto.jcd_project_id);
-  // let jcdPressItems = await getPress(jcdProjectDto.jcd_project_id);
-  let [
-    jcdProjectDescDto,
-    jcdProjectVenueDto,
-    jcdProducerDtos,
-    jcdCredits,
-    jcdProdCredits,
-    jcdPressItems,
-  ] = await Promise.all([
-    JcdProjectDb.getDesc(jcdProjectDto.jcd_project_id),
-    JcdProjectDb.getVenue(jcdProjectDto.jcd_project_id),
-    JcdCreditsDb.getProducers(jcdProjectDto.jcd_project_id),
-    getCredits(jcdProjectDto.jcd_project_id),
-    getProdCredits(jcdProjectDto.jcd_project_id),
-    getPress(jcdProjectDto.jcd_project_id),
-  ]);
+  let jcdProjectDescDto = await JcdProjectDb.getDesc(jcdProjectDto.jcd_project_id);
+  let jcdProjectVenueDto = await JcdProjectDb.getVenue(jcdProjectDto.jcd_project_id);
+  let jcdProducerDtos = await JcdCreditsDb.getProducers(jcdProjectDto.jcd_project_id);
+  let jcdCredits = await getCredits(jcdProjectDto.jcd_project_id);
+  let jcdProdCredits = await getProdCredits(jcdProjectDto.jcd_project_id);
+  let jcdPressItems = await getPress(jcdProjectDto.jcd_project_id);
+  // let [
+  //   jcdProjectDescDto,
+  //   jcdProjectVenueDto,
+  //   jcdProducerDtos,
+  //   jcdCredits,
+  //   jcdProdCredits,
+  //   jcdPressItems,
+  // ] = await Promise.all([
+  //   JcdProjectDb.getDesc(jcdProjectDto.jcd_project_id),
+  //   JcdProjectDb.getVenue(jcdProjectDto.jcd_project_id),
+  //   JcdCreditsDb.getProducers(jcdProjectDto.jcd_project_id),
+  //   getCredits(jcdProjectDto.jcd_project_id),
+  //   getProdCredits(jcdProjectDto.jcd_project_id),
+  //   getPress(jcdProjectDto.jcd_project_id),
+  // ]);
 
   let jcdProject: JcdProject;
   const playwright = jcdCredits.map(jcdCredit => {

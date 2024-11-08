@@ -6,7 +6,10 @@ import { JcdProjectBaseDto } from './jcd-project-base-dto';
 const JcdProjectListItemDtoSchema = Type.Composite([
   JcdProjectBaseDto.schema,
   Type.Object({
-    title_uri: Type.String(),
+    title_uri: Type.Union([
+      Type.String(),
+      Type.Null(),
+    ]),
     sort_order: Type.Number(),
   }),
 ]);
