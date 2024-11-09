@@ -2,6 +2,7 @@
 import { JcdProjectDb } from './db/jcd-project-db';
 import { JcdCreditsDb } from './db/jcd-credits-db';
 import { JcdPressDb } from './db/jcd-press-db';
+import { Timer } from '../util/timer';
 
 type JcdCredit = {
   label: string;
@@ -67,25 +68,21 @@ async function getProjects(): Promise<JcdProjectListItem[]> {
 
 async function getProjectByRoute(projectRoute: string) {
   let jcdProjectDto = await JcdProjectDb.getProjectBaseByRoute(projectRoute);
-  let jcdProducerDtos = await JcdCreditsDb.getProducers(jcdProjectDto.jcd_project_id);
-  let jcdCredits = await getCredits(jcdProjectDto.jcd_project_id);
-  let jcdProdCredits = await getProdCredits(jcdProjectDto.jcd_project_id);
-  let jcdPressItems = await getPress(jcdProjectDto.jcd_project_id);
-  // let [
-  //   jcdProjectDescDto,
-  //   jcdProjectVenueDto,
-  //   jcdProducerDtos,
-  //   jcdCredits,
-  //   jcdProdCredits,
-  //   jcdPressItems,
-  // ] = await Promise.all([
-  //   JcdProjectDb.getDesc(jcdProjectDto.jcd_project_id),
-  //   JcdProjectDb.getVenue(jcdProjectDto.jcd_project_id),
-  //   JcdCreditsDb.getProducers(jcdProjectDto.jcd_project_id),
-  //   getCredits(jcdProjectDto.jcd_project_id),
-  //   getProdCredits(jcdProjectDto.jcd_project_id),
-  //   getPress(jcdProjectDto.jcd_project_id),
-  // ]);
+  // let jcdProducerDtos = await JcdCreditsDb.getProducers(jcdProjectDto.jcd_project_id);
+  // let jcdCredits = await getCredits(jcdProjectDto.jcd_project_id);
+  // let jcdProdCredits = await getProdCredits(jcdProjectDto.jcd_project_id);
+  // let jcdPressItems = await getPress(jcdProjectDto.jcd_project_id);
+  let [
+    jcdProducerDtos,
+    jcdCredits,
+    jcdProdCredits,
+    jcdPressItems,
+  ] = await Promise.all([
+    JcdCreditsDb.getProducers(jcdProjectDto.jcd_project_id),
+    getCredits(jcdProjectDto.jcd_project_id),
+    getProdCredits(jcdProjectDto.jcd_project_id),
+    getPress(jcdProjectDto.jcd_project_id),
+  ]);
 
   let jcdProject: JcdProject;
   const playwright = jcdCredits.map(jcdCredit => {
