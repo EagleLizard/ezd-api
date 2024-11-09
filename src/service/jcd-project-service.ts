@@ -1,7 +1,6 @@
 
 import { JcdProjectDb } from './db/jcd-project-db';
 import { JcdCreditsDb } from './db/jcd-credits-db';
-import { JcdProjectDtoType } from '../lib/models/dto/jcd-project-dto';
 import { JcdPressDb } from './db/jcd-press-db';
 
 type JcdCredit = {
@@ -43,7 +42,7 @@ type JcdProjectListItem = {} & {
 };
 
 export const JcdProjectService = {
-  getProject,
+  getProjectByRoute,
   getProjects,
 } as const;
 
@@ -66,9 +65,8 @@ async function getProjects(): Promise<JcdProjectListItem[]> {
   return jcdProjectListItems;
 }
 
-async function getProject(jcdProjectDto: JcdProjectDtoType) {
-  let jcdProjectDescDto = await JcdProjectDb.getDesc(jcdProjectDto.jcd_project_id);
-  let jcdProjectVenueDto = await JcdProjectDb.getVenue(jcdProjectDto.jcd_project_id);
+async function getProjectByRoute(projectRoute: string) {
+  let jcdProjectDto = await JcdProjectDb.getProjectBaseByRoute(projectRoute);
   let jcdProducerDtos = await JcdCreditsDb.getProducers(jcdProjectDto.jcd_project_id);
   let jcdCredits = await getCredits(jcdProjectDto.jcd_project_id);
   let jcdProdCredits = await getProdCredits(jcdProjectDto.jcd_project_id);
@@ -99,16 +97,32 @@ async function getProject(jcdProjectDto: JcdProjectDtoType) {
   const productionCredits = jcdProdCredits.map(jcdCredit => {
     return `${jcdCredit.label} ${jcdCredit.contribs.join(' & ')}`;
   });
+
+  if(jcdProjectDto.venue === null) {
+    /*
+      todo:xxx: replace with proper error logging
+    _*/
+    console.error(jcdProjectDto);
+    throw new Error('unexpected null JcdProject venue');
+  }
+  if(jcdProjectDto.description_text === null) {
+    /*
+      todo:xxx: replace with proper error logging
+    _*/
+    console.error(jcdProjectDto);
+    throw new Error('unexpected null JcdProject description_text');
+  }
+
   jcdProject = {
     projectKey: jcdProjectDto.project_key,
     route: jcdProjectDto.route,
     title: jcdProjectDto.title,
     playwright,
-    venue: jcdProjectVenueDto.name,
+    venue: jcdProjectDto.venue,
     producer,
     month: jcdProjectDto.project_date.getMonth() + 1,
     year: jcdProjectDto.project_date.getFullYear(),
-    description: jcdProjectDescDto.text.split('\n'),
+    description: jcdProjectDto.description_text?.split('\n'),
     productionCredits,
     mediaAndPress: jcdPressItems,
   };
@@ -116,22 +130,24 @@ async function getProject(jcdProjectDto: JcdProjectDtoType) {
 }
 
 async function getProdCredits(jcd_project_id: number) {
+  let jcdProdCredits: JcdCredit[];
   let jcdProdCreditDtos = await JcdCreditsDb.getProdCredits(jcd_project_id);
-  let jcdCreditPromises: Promise<JcdCredit>[] = [];
+  let jcdProdCreditMap: Map<number, JcdCredit> = new Map();
+
   for(let i = 0; i < jcdProdCreditDtos.length; ++i) {
+    let currCredit: JcdCredit | undefined;
     let currCreditDto = jcdProdCreditDtos[i];
-    let contribDtosPromise: Promise<JcdCredit> = JcdCreditsDb
-      .getProdCreditContribs(currCreditDto.jcd_prod_credit_id)
-      .then(prodCreditContribDtos => {
-        return {
-          label: currCreditDto.label,
-          contribs: prodCreditContribDtos.map(contribDto => contribDto.name),
-        };
-      });
-    jcdCreditPromises.push(contribDtosPromise);
+    if((currCredit = jcdProdCreditMap.get(currCreditDto.jcd_prod_credit_id)) === undefined) {
+      currCredit = {
+        label: currCreditDto.label,
+        contribs: [],
+      };
+      jcdProdCreditMap.set(currCreditDto.jcd_prod_credit_id, currCredit);
+    }
+    currCredit.contribs.push(currCreditDto.name);
   }
-  let jcdCredits = await Promise.all(jcdCreditPromises);
-  return jcdCredits;
+  jcdProdCredits = [ ...jcdProdCreditMap.values() ];
+  return jcdProdCredits;
 }
 
 async function getCredits(jcd_project_id: number) {

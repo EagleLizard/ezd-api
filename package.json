@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./dist/main.js",
-    "dev": "node --watch ./dist/**/*.js",
+    "dev": "node --watch-path ./dist/ dist/main.js",
     "build": "tsc",
     "test": "vitest",
     "coverage": "vitest run --coverage"

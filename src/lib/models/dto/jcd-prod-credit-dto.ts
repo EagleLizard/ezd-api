@@ -4,7 +4,9 @@ import { Value } from '@sinclair/typebox/value';
 
 const JcdProdCreditDtoSchema = Type.Object({
   jcd_prod_credit_id: Type.Number(),
+  jcd_prod_credit_contrib_id: Type.Number(),
   label: Type.String(),
+  name: Type.String(),
 });
 
 export type JcdProdCreditDtoType = Static<typeof JcdProdCreditDtoSchema>;

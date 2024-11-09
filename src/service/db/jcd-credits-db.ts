@@ -71,11 +71,21 @@ async function getCreditContribs(jcd_credit_id: number) {
 async function getProdCredits(jcd_project_id: number) {
   let queryStr = `
     SELECT
-      jpc.jcd_prod_credit_id, jpc.label
+      jpc.jcd_prod_credit_id, jpc.label,
+      jpcc.jcd_prod_credit_contrib_id,
+      coalesce(p."name", o."name") name
     FROM jcd_prod_credit jpc
+      LEFT JOIN jcd_prod_credit_contrib jpcc
+        ON jpcc.jcd_prod_credit_id = jpc.jcd_prod_credit_id
+      LEFT JOIN person p
+        ON jpcc.person_id = p.person_id
+      LEFT JOIN org o
+        ON jpcc.org_id = o.org_id
     WHERE jpc.jcd_project_id = $1
-    GROUP BY jpc.jcd_prod_credit_id, jpc.label, jpc.sort_order
-    ORDER BY jpc.sort_order ASC
+    GROUP BY
+      jpc.jcd_prod_credit_id, jpc.label, jpc.sort_order,
+      jpcc.jcd_prod_credit_contrib_id, p."name", o."name"
+    ORDER BY jpc.sort_order ASC, jpcc.sort_order ASC
   `;
   let res = await PgClient.query(queryStr, [
     jcd_project_id,

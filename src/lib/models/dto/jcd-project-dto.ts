@@ -6,7 +6,14 @@ import { JcdProjectBaseDto } from './jcd-project-base-dto';
 const JcdProjectDtoSchema = Type.Composite([
   JcdProjectBaseDto.schema,
   Type.Object({
-    venue: Type.String(),
+    venue: Type.Union([
+      Type.String(),
+      Type.Null(),
+    ]),
+    description_text: Type.Union([
+      Type.String(),
+      Type.Null(),
+    ]),
   }),
 ]);
 
