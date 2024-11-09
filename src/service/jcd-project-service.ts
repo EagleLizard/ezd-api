@@ -151,21 +151,23 @@ async function getProdCredits(jcd_project_id: number) {
 }
 
 async function getCredits(jcd_project_id: number) {
+  let jcdCredits: JcdCredit[];
   let jcdCreditDtos = await JcdCreditsDb.getCredits(jcd_project_id);
-  let jcdCreditPromises: Promise<JcdCredit>[] = [];
+  let jcdCreditMap: Map<number, JcdCredit> = new Map();
+
   for(let i = 0; i < jcdCreditDtos.length; ++i) {
+    let currCredit: JcdCredit | undefined;
     let currCreditDto = jcdCreditDtos[i];
-    let contribDtosPromise: Promise<JcdCredit> = JcdCreditsDb
-      .getCreditContribs(currCreditDto.jcd_credit_id)
-      .then(contribDtos => {
-        return {
-          label: currCreditDto.label,
-          contribs: contribDtos.map(contribDto => contribDto.name),
-        };
-      });
-    jcdCreditPromises.push(contribDtosPromise);
+    if((currCredit = jcdCreditMap.get(currCreditDto.jcd_credit_id)) === undefined) {
+      currCredit = {
+        label: currCreditDto.label,
+        contribs: [],
+      };
+      jcdCreditMap.set(currCreditDto.jcd_credit_id, currCredit);
+    }
+    currCredit.contribs.push(currCreditDto.name);
   }
-  let jcdCredits = await Promise.all(jcdCreditPromises);
+  jcdCredits = [ ...jcdCreditMap.values() ];
   return jcdCredits;
 }
 
