@@ -1,17 +1,13 @@
 
 import { PgClient } from '../../lib/db/postgres-client';
-import { JcdProjectDescDto, JcdProjectDescDtoType } from '../../lib/models/dto/jcd-project-desc-dto';
 import { JcdProjectDto } from '../../lib/models/dto/jcd-project-dto';
 import { JcdProjectListItemDto } from '../../lib/models/dto/jcd-project-list-item-dto';
-import { JcdProjectVenueDto } from '../../lib/models/dto/jcd-project-venue-dto';
 import { JcdProjectBaseDto } from '../../lib/models/dto/jcd-project-base-dto';
 
 export const JcdProjectDb = {
   getProjectByKey,
   getProjects,
   getProjectBaseByRoute,
-  getDesc,
-  getVenue,
 } as const;
 
 async function getProjectByKey(project_key: string) {
@@ -89,38 +85,4 @@ async function getProjectBaseByRoute(projectRoute: string) {
   ]);
   let jcdProjectDto = JcdProjectDto.parse(res.rows[0]);
   return jcdProjectDto;
-}
-
-async function getDesc(jcd_project_id: number): Promise<JcdProjectDescDtoType> {
-  let queryStr = `
-    SELECT
-      jpd.jcd_project_description_id, d.description_id, d.text
-    FROM jcd_project_description jpd
-      INNER JOIN description d
-        ON jpd.description_id = d.description_id
-    WHERE jpd.jcd_project_id = $1
-    ORDER BY jpd.last_modified DESC
-    LIMIT 1
-  `;
-  let res = await PgClient.query(queryStr, [
-    jcd_project_id,
-  ]);
-  let jcdProjectDescDto = JcdProjectDescDto.parse(res.rows[0]);
-  return jcdProjectDescDto;
-}
-
-async function getVenue(jcd_project_id: number) {
-  let queryStr = `
-    SELECT jpv.jcd_project_venue_id, v."name" FROM jcd_project_venue jpv
-      INNER JOIN venue v
-        ON jpv.venue_id = v.venue_id
-    WHERE jpv.jcd_project_id = $1
-    ORDER BY jpv.last_modified DESC
-    LIMIT 1
-  `;
-  let res = await PgClient.query(queryStr, [
-    jcd_project_id,
-  ]);
-  let jcdProjectVenueDto = JcdProjectVenueDto.parse(res.rows[0]);
-  return jcdProjectVenueDto;
 }
