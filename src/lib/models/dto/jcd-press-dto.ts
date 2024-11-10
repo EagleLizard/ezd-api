@@ -13,9 +13,9 @@ const JcdPressDtoSchema = Type.Object({
 export type JcdPressDtoType = Static<typeof JcdPressDtoSchema>;
 
 export const JcdPressDto = {
-  parse,
+  decode,
 } as const;
 
-function parse(val: unknown): JcdPressDtoType {
-  return Value.Parse(JcdPressDtoSchema, val);
+function decode(val: unknown) {
+  return Value.Decode(JcdPressDtoSchema, val);
 }

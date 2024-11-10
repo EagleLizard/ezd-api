@@ -24,7 +24,7 @@ async function getProjectByKey(project_key: string) {
   if(res.rows.length < 1) {
     return;
   }
-  return JcdProjectBaseDto.parse(res.rows[0]);
+  return JcdProjectBaseDto.decode(res.rows[0]);
 }
 
 async function getProjects() {
@@ -50,8 +50,7 @@ async function getProjects() {
     ORDER BY jps.sort_order ASC
   `;
   let res = await PgClient.query(queryStr);
-  let jcdProjectListItems = res.rows.map(JcdProjectListItemDto.deserialize);
-  return jcdProjectListItems;
+  return res.rows.map(JcdProjectListItemDto.decode);
 }
 
 async function getProjectBaseByRoute(projectRoute: string) {
@@ -83,6 +82,5 @@ async function getProjectBaseByRoute(projectRoute: string) {
   let res = await PgClient.query(queryStr, [
     projectRoute,
   ]);
-  let jcdProjectDto = JcdProjectDto.parse(res.rows[0]);
-  return jcdProjectDto;
+  return JcdProjectDto.decode(res.rows[0]);
 }

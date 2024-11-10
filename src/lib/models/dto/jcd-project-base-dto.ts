@@ -13,10 +13,10 @@ const JcdProjectBaseDtoSchema = Type.Object({
 export type JcdProjectBaseDtoType = Static<typeof JcdProjectBaseDtoSchema>;
 
 export const JcdProjectBaseDto = {
-  parse,
+  decode,
   schema: JcdProjectBaseDtoSchema,
 } as const;
 
-function parse(val: unknown): JcdProjectBaseDtoType {
-  return Value.Parse(JcdProjectBaseDtoSchema, val);
+function decode(val: unknown) {
+  return Value.Decode(JcdProjectBaseDtoSchema, val);
 }

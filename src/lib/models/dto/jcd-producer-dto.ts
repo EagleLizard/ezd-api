@@ -10,9 +10,9 @@ const JcdProduducerDtoSchema = Type.Object({
 export type JcdProduducerDtoType = Static<typeof JcdProduducerDtoSchema>;
 
 export const JcdProducerDto = {
-  parse,
+  decode,
 } as const;
 
-function parse(val: unknown): JcdProduducerDtoType {
-  return Value.Parse(JcdProduducerDtoSchema, val);
+function decode(val: unknown) {
+  return Value.Decode(JcdProduducerDtoSchema, val);
 }

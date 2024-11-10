@@ -12,9 +12,9 @@ const JcdCreditDtoSchema = Type.Object({
 export type JcdCreditDtoType = Static<typeof JcdCreditDtoSchema>;
 
 export const JcdCreditDto = {
-  parse,
+  decode,
 } as const;
 
-function parse(val: unknown): JcdCreditDtoType {
-  return Value.Parse(JcdCreditDtoSchema, val);
+function decode(val: unknown) {
+  return Value.Decode(JcdCreditDtoSchema, val);
 }

@@ -25,8 +25,7 @@ async function getProducers(jcd_project_id: number) {
   let res = await PgClient.query(queryStr, [
     jcd_project_id,
   ]);
-  let jcdProducerDtos = res.rows.map(JcdProducerDto.parse);
-  return jcdProducerDtos;
+  return res.rows.map(JcdProducerDto.decode);
 }
 
 async function getCredits(jcd_project_id: number) {
@@ -48,8 +47,7 @@ async function getCredits(jcd_project_id: number) {
   let res = await PgClient.query(queryStr, [
     jcd_project_id,
   ]);
-  let jcdCreditDtos = res.rows.map(JcdCreditDto.parse);
-  return jcdCreditDtos;
+  return res.rows.map(JcdCreditDto.decode);
 }
 
 async function getProdCredits(jcd_project_id: number) {
@@ -71,6 +69,5 @@ async function getProdCredits(jcd_project_id: number) {
   let res = await PgClient.query(queryStr, [
     jcd_project_id,
   ]);
-  let jcdProdCreditDtos = res.rows.map(JcdProdCreditDto.parse);
-  return jcdProdCreditDtos;
+  return res.rows.map(JcdProdCreditDto.decode);
 }

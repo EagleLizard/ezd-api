@@ -20,9 +20,9 @@ const JcdProjectDtoSchema = Type.Composite([
 export type JcdProjectDtoType = Static<typeof JcdProjectDtoSchema>;
 
 export const JcdProjectDto = {
-  parse,
+  decode,
 } as const;
 
-function parse(val: unknown): JcdProjectDtoType {
-  return Value.Parse(JcdProjectDtoSchema, val);
+function decode(val: unknown) {
+  return Value.Decode(JcdProjectDtoSchema, val);
 }

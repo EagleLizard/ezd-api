@@ -2,7 +2,6 @@
 import { JcdProjectDb } from './db/jcd-project-db';
 import { JcdCreditsDb } from './db/jcd-credits-db';
 import { JcdPressDb } from './db/jcd-press-db';
-import { Timer } from '../util/timer';
 
 type JcdCredit = {
   label: string;
@@ -11,7 +10,7 @@ type JcdCredit = {
 
 type JcdPressLink = {
   label: string;
-  url: string;
+  uri: string;
 };
 
 type JcdPressItem = {
@@ -178,7 +177,7 @@ async function getPress(jcd_project_id: number): Promise<JcdPressItem[]> {
       publication: jcdPressDto.publication_name,
       link: {
         label: jcdPressDto.link_text,
-        url: jcdPressDto.link_url,
+        uri: jcdPressDto.link_url,
       },
     };
     if(jcdPressDto.description !== null) {

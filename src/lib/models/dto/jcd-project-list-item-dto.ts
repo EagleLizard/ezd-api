@@ -17,9 +17,9 @@ const JcdProjectListItemDtoSchema = Type.Composite([
 export type JcdProjectListItemDtoType = Static<typeof JcdProjectListItemDtoSchema>;
 
 export const JcdProjectListItemDto = {
-  deserialize,
+  decode,
 } as const;
 
-function deserialize(val: unknown): JcdProjectListItemDtoType {
-  return Value.Parse(JcdProjectListItemDtoSchema, val);
+function decode(val: unknown) {
+  return Value.Decode(JcdProjectListItemDtoSchema, val);
 }

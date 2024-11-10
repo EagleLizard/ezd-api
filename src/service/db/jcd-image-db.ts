@@ -23,6 +23,6 @@ async function getGalleryImages(galleryKey: string) {
   let res = await PgClient.query(queryStr, [
     galleryKey,
   ]);
-  let JcdGalleryImageDtos = res.rows.map(JcdGalleryImageDto.parse);
+  let JcdGalleryImageDtos = res.rows.map(JcdGalleryImageDto.decode);
   return JcdGalleryImageDtos;
 }

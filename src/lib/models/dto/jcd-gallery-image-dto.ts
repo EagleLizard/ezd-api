@@ -16,9 +16,9 @@ const JcdGalleryImageDtoSchema = Type.Object({
 export type JcdGalleryImageDtoType = Static<typeof JcdGalleryImageDtoSchema>;
 
 export const JcdGalleryImageDto = {
-  parse,
+  decode,
 } as const;
 
-function parse(val: unknown): JcdGalleryImageDtoType {
-  return Value.Parse(JcdGalleryImageDtoSchema, val);
+function decode(val: unknown) {
+  return Value.Decode(JcdGalleryImageDtoSchema, val);
 }

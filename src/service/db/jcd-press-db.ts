@@ -1,3 +1,4 @@
+
 import { PgClient } from '../../lib/db/postgres-client';
 import { JcdPressDto } from '../../lib/models/dto/jcd-press-dto';
 
@@ -19,6 +20,5 @@ async function getProjectPress(jcd_project_id: number) {
   let res = await PgClient.query(queryStr, [
     jcd_project_id,
   ]);
-  let jcdPressDtos = res.rows.map(JcdPressDto.parse);
-  return jcdPressDtos;
+  return res.rows.map(JcdPressDto.decode);
 }
