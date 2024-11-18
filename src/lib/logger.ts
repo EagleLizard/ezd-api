@@ -19,7 +19,9 @@ const APP_ERROR_LOG_FILE_PATH = [
   APP_ERROR_LOG_FILE_NAME,
 ].join(path.sep);
 
-const level = (config.EZD_ENV === 'DEV')
+const devEnv = config.EZD_ENV === 'DEV';
+
+const level = (devEnv)
   ? 'debug'
   : 'info'
 ;
@@ -31,20 +33,26 @@ export const logger = initLogger();
 */
 function initLogger() {
   let opts: LoggerOptions;
+  let infoStream: pino.StreamEntry;
+  let errStream: pino.StreamEntry | undefined;
   // let stream = pino.destination('./logs/app2.log');\
-  mkdirIfNotExist(LOG_DIR_PATH);
-  let streams: pino.StreamEntry[] = [
-    // {
-    //   stream: pino.destination(APP_LOG_FILE_PATH),
-    //   level: 'trace',
-    // },
-    {
-      stream: pino.destination(APP_LOG_FILE_PATH),
-    },
-    {
+  if(devEnv) {
+    mkdirIfNotExist(LOG_DIR_PATH);
+    infoStream = {
+      stream: pino.destination(APP_LOG_FILE_PATH)
+    };
+    errStream = {
       stream: pino.destination(APP_ERROR_LOG_FILE_PATH),
       level: 'error',
-    },
+    };
+  } else {
+    infoStream = {
+      stream: process.stdout,
+    };
+  }
+
+  let streams: pino.StreamEntry[] = [
+    infoStream,
     // {
     //   stream: process.stdout,
     //   level: 'debug',
@@ -54,9 +62,10 @@ function initLogger() {
     //   level: 'error',
     // },
   ];
+  if(errStream !== undefined) {
+    streams.push(errStream);
+  }
   let stream = pino.multistream(streams);
-  console.log({ stream });
-  console.log({ level });
   opts = {
     level,
   };
