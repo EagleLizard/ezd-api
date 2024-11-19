@@ -5,6 +5,9 @@ import http from 'http';
 
 import { config } from '../config';
 import { DEFAULT_IMG_SZ, ImgSz, imgSzFromDimensions, validateImgSz } from '../lib/models/img-sz';
+import { AwsS3Client } from '../lib/aws/aws-s3-client';
+import { GetObjectCommand } from '@aws-sdk/client-s3';
+import { JCD_IMG_V4_S3_PREFIX } from '../constants';
 
 export type GetImageOpts = {} & {
   imagePath: string;
@@ -15,8 +18,10 @@ export type GetImageOpts = {} & {
 
 export type ImageStreamRes = {
   stream: Readable;
-  headers: Record<string, string>;
+  headers: Record<string, string | number>;
 };
+
+const DEV_STREAM = (config.EZD_ENV === 'DEV');
 
 export const ImageService = {
   getImage,
@@ -38,12 +43,44 @@ async function getImage(opts: GetImageOpts): Promise<ImageStreamRes> {
     sz = DEFAULT_IMG_SZ;
   }
   imagePath = [ sz, opts.imagePath ].join(path.sep);
-  if(config.EZD_ENV === 'DEV') {
+  if(DEV_STREAM) {
     imageStreamRes = await getDevStream(imagePath);
   } else {
+    imageStreamRes = await getS3Stream(imagePath);
     // todo:xxx: implement aws
-    throw new Error('real impl');
+    // throw new Error('real impl');
   }
+  return imageStreamRes;
+}
+
+async function getS3Stream(imagePath: string): Promise<ImageStreamRes> {
+  let imageStreamRes: ImageStreamRes;
+  let headers: Record<string, string | number>;
+  let s3Client = AwsS3Client.getClient();
+  let objKey = [
+    JCD_IMG_V4_S3_PREFIX,
+    imagePath,
+  ].join(path.sep);
+  console.log(objKey);
+  let getObjCmd = new GetObjectCommand({
+    Bucket: config.EZD_API_BUCKET_KEY,
+    Key: objKey,
+  });
+  let getObjResp = await s3Client.send(getObjCmd);
+  headers = {};
+  if(getObjResp.ContentType !== undefined) {
+    headers['content-type'] = getObjResp.ContentType;
+  }
+  if(getObjResp.ContentLength !== undefined) {
+    headers['content-length'] = getObjResp.ContentLength;
+  }
+  if(getObjResp.Body === undefined) {
+    throw new Error('s3 GetObject response without body');
+  }
+  imageStreamRes = {
+    stream: getObjResp.Body as Readable,
+    headers,
+  };
   return imageStreamRes;
 }
 

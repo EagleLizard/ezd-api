@@ -2,22 +2,42 @@
 import { Pool, PoolClient, QueryConfig, QueryResult } from 'pg';
 import { config } from '../../config';
 import { isPromise } from 'util/types';
-
-const pgPool = new Pool({
-  host: config.POSTGRES_HOST,
-  port: config.POSTGRES_PORT,
-  user: config.POSTGRES_USER,
-  password: config.POSTGRES_PASSWORD,
-  database: config.POSTGRES_DB,
-});
+import { SecretService } from '../../service/secret-service';
 
 export type DbClient = {
   query<T extends any[], V extends any[]>(query: string | QueryConfig<T[]>, values?: V): Promise<QueryResult>;
 };
 
+const getPool = (function getGetPool() {
+  let pgPool: Pool;
+  return async function getPool() {
+    if(pgPool !== undefined) {
+      return pgPool;
+    }
+    let pgPassword: string | undefined;
+    if(config.POSTGRES_PASSWORD !== undefined) {
+      pgPassword = config.POSTGRES_PASSWORD;
+    } else {
+      pgPassword = await SecretService.getSsmParam('POSTGRES_PASSWORD');
+    }
+    if(pgPassword === undefined) {
+      throw new Error('missing postgres password');
+    }
+    pgPool = new Pool({
+      host: config.POSTGRES_HOST,
+      port: config.POSTGRES_PORT,
+      user: config.POSTGRES_USER,
+      password: pgPassword,
+      database: config.POSTGRES_DB,
+    });
+    return pgPool;
+  };
+})();
+
 export class PgClient {
   private static async getClient() {
-    const client = await pgPool.connect();
+    let pool = await getPool();
+    const client = await pool.connect();
     return client;
   }
 
@@ -25,7 +45,8 @@ export class PgClient {
     // let client = await PgClient.getClient();
     // let queryRes = await client.query(query, values);
     // client.release();
-    let queryRes = await pgPool.query(query, values);
+    let pool = await getPool();
+    let queryRes = await pool.query(query, values);
     return queryRes;
   }
 
@@ -49,8 +70,9 @@ export class PgClient {
     }
   }
 
-  static end() {
-    return pgPool.end();
+  static async end() {
+    let pool = await getPool();
+    return pool.end();
   }
 
   static async checkTxn(client: DbClient) {

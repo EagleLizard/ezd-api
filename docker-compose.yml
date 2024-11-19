@@ -2,6 +2,30 @@
 # version: "3.9"
 
 services:
+  api:
+    container_name: ezd_api
+    build: .
+    stop_grace_period: 1s
+    ports:
+      - ${EZD_PORT}:${EZD_PORT}
+    environment:
+      - EZD_ENV=${EZD_ENV}
+      - EZD_HOST=0.0.0.0
+      - EZD_PORT=${EZD_PORT}
+      - POSTGRES_HOST={POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_DOCKER_PORT}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - EZD_WEB_ORIGIN=${EZD_WEB_ORIGIN}
+      - SFS_HOST=${SFS_HOST}
+      - SFS_PORT=${SFS_PORT}
+      - EZD_AWS_ACCESS_KEY_ID=${EZD_AWS_ACCESS_KEY_ID}
+      - EZD_AWS_SECRET_ACCESS_KEY=${EZD_AWS_SECRET_ACCESS_KEY}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "128m"
   db:
     container_name: ezd_api_postgres_db
     restart: unless-stopped
