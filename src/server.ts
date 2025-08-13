@@ -1,10 +1,14 @@
 
+import path from 'path/posix';
+
 import Fastify, { FastifyInstance } from 'fastify';
 import cors from '@fastify/cors';
+import fastifyStatic from '@fastify/static';
 
 import { addRoutes } from './routes';
 import { config } from './config';
 import { logger } from './lib/logger';
+import { BASE_DIR } from './constants';
 
 export async function initServer() {
   let app: FastifyInstance;
@@ -22,6 +26,16 @@ export async function initServer() {
     origin: '*',
     credentials: true,
   });
+
+  // app.register(fastifyStatic, {
+  //   root: [ BASE_DIR, 'jcd-web/dist' ].join(path.sep),
+  //   prefix: '/', // default
+  //   wildcard: false,
+  // });
+
+  /*
+    Routes
+  _*/
 
   addRoutes(app);
 

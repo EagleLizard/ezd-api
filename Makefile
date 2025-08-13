@@ -28,3 +28,9 @@ hard-reset-db:
 # simple file dev server
 sfs-dev:
 	python3 -m http.server -d ./_local/static ${SFS_PORT}
+build-jcd-web-image:
+	docker build -t ${JCD_WEB_CONTAINER_TAG} ./jcd-web/ -f ./jcd-web/Dockerfile.jcd-web
+build-jcd-web: build-jcd-web-image
+	docker run \
+	-v ./jcd-web/dist:/home/jcd-web-dist \
+	--name ${JCD_WEB_CONTAINER_NAME} --rm ${JCD_WEB_CONTAINER_TAG} ./build-jcd-web.sh

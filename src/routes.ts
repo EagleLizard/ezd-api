@@ -9,6 +9,19 @@ import { getJcdProjectCtrl } from './ctrl/project/get-jcd-project';
 import { getJcdProjectImagesCtrl } from './ctrl/project/get-jcd-project-images';
 
 export function addRoutes(app: FastifyInstance) {
+
+  /*
+    see: https://github.com/fastify/help/issues/74
+  _*/
+  // app.get()
+
+  // app.setNotFoundHandler((req, res) => {
+  //   console.log(req.url);
+  //   console.log(req.method);
+  //   console.log(req.raw.url);
+  //   return res.status(404).send();
+  // });
+
   app.get('/health', getHealthCtrl);
   app.get('/err', getErrorCtrl);
 
