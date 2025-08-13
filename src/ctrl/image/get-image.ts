@@ -46,5 +46,7 @@ export async function getImageCtrl(
     height: heightParam,
   });
   res.header('content-type', imageStreamRes.headers['content-type']);
+  // res.header('cache-control', 'no-cache');
+  res.header('cache-control', 'max-age=30');
   return res.send(imageStreamRes.stream);
 }

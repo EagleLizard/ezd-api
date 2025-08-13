@@ -42,4 +42,34 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_DB=${POSTGRES_DB}
-
+  ezd-api-cloudflare-tunnel:
+    container_name: ezd_api_cloudflare_tunnel
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN_EZD_API_MBP}
+    volumes:
+      - ${HOME_BASE_DIR}/ezd-api-cloudflare-tunnel/config:/etc/cloudflared
+  jcd-web-cloudflare-tunnel:
+    container_name: jcd_web_cloudflare_tunnel
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN_JCD_WEB_MBP}
+    volumes:
+      - ${HOME_BASE_DIR}/jcd-web-cloudflare-tunnel/config:/etc/cloudflared
+  nginx:
+    container_name: ezd_api_nginx
+    image: nginx:latest
+    restart: unless-stopped
+    ports:
+      - "4666:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./jcd-web/dist:/var/www/jcd-web:ro
+    logging:
+      driver: "local"
+      options:
+        max-size: 128m
